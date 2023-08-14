@@ -1,13 +1,12 @@
 package az.mycompany.bankboot.controller;
 
 
+import az.mycompany.bankboot.dto.request.ReqTransaction;
 import az.mycompany.bankboot.dto.response.RespTransaction;
 import az.mycompany.bankboot.dto.response.Response;
 import az.mycompany.bankboot.service.TransactionServise;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,4 +20,11 @@ public class TransactionController {
     public Response<List<RespTransaction>> getTransactionList(){
         return transactionServise.getTransactionList();
     }
+
+    @PostMapping("/AddTransaction")
+    public Response addTransaction(@RequestBody ReqTransaction reqTransaction){
+        return transactionServise.addTransaction(reqTransaction);
+    }
+
+
 }

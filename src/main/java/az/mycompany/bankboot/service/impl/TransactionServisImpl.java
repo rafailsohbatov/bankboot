@@ -1,5 +1,6 @@
 package az.mycompany.bankboot.service.impl;
 
+import az.mycompany.bankboot.dto.request.ReqTransaction;
 import az.mycompany.bankboot.dto.response.*;
 import az.mycompany.bankboot.entity.Account;
 import az.mycompany.bankboot.entity.Customer;
@@ -7,6 +8,7 @@ import az.mycompany.bankboot.entity.Transaction;
 import az.mycompany.bankboot.enums.EnumAvailableStatus;
 import az.mycompany.bankboot.exception.BankException;
 import az.mycompany.bankboot.exception.ExceptionConstant;
+import az.mycompany.bankboot.repository.AccountRepository;
 import az.mycompany.bankboot.repository.TransactionRepository;
 import az.mycompany.bankboot.service.TransactionServise;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.List;
 public class TransactionServisImpl implements TransactionServise {
 
     private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
@@ -30,11 +33,45 @@ public class TransactionServisImpl implements TransactionServise {
         List<RespTransaction> respTransactionList = new ArrayList<>();
         try {
             List<Transaction> transactionList = transactionRepository.findAllByActive(EnumAvailableStatus.ACTIVE.getValue());
+            if(transactionList.isEmpty()){
+                throw new BankException(ExceptionConstant.TRANSACTION_NOT_FOUND,"Transaction Not Found");
+            }
             for (Transaction transaction : transactionList) {
                 RespTransaction respTransaction = convert(transaction);
                 respTransactionList.add(respTransaction);
             }
             response.setT(respTransactionList);
+            response.setRespStatus(RespStatus.getSuccessRespStatus());
+        } catch (BankException be) {
+            response.setRespStatus(new RespStatus(be.getCode(), be.getMessage()));
+            be.printStackTrace();
+        } catch (Exception ex) {
+            response.setRespStatus(new RespStatus(ExceptionConstant.INTERNAL_EXCEPTION, "Internal Exception"));
+            ex.printStackTrace();
+        }
+        return response;
+    }
+
+    @Override
+    public Response addTransaction(ReqTransaction reqTransaction) {
+        Response response = new Response();
+        try {
+            Long accountId = reqTransaction.getAccountId();
+            String crAccount=reqTransaction.getCrAccount();
+            if (reqTransaction == null || accountId == null || crAccount == null) {
+              throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA,"Invalid Request Data");
+            }
+            Account account = accountRepository.findByIdAndActive(accountId,EnumAvailableStatus.ACTIVE.getValue());
+            if(account == null){
+                throw new BankException(ExceptionConstant.ACCOUNT_NOT_FOUND,"Account Not Found");
+            }
+            Transaction transaction = new Transaction();
+            transaction.setDtAccount(account);
+            transaction.setCrAccount(crAccount);
+            Double amount = reqTransaction.getAmount() * 100;
+            transaction.setAmount(amount.intValue());
+            transaction.setCurrency(reqTransaction.getCurrency());
+            transactionRepository.save(transaction);
             response.setRespStatus(RespStatus.getSuccessRespStatus());
         } catch (BankException be) {
             response.setRespStatus(new RespStatus(be.getCode(), be.getMessage()));
