@@ -8,4 +8,7 @@ public final class ExceptionConstant {
     public static final Integer CUSTOMER_NOT_FOUND_FOR_THIS_ACCOUNT = 104;
     public static final Integer ACCOUNT_NOT_FOUND_FOR_THIS_TRANSACTION = 105;
     public static final Integer TRANSACTION_NOT_FOUND = 106;
+    public static final Integer INVALID_USER = 107;
+    public static final Integer USER_ALREADY_EXIST_IN_SESSION = 108;
+    public static final Integer INVALID_TOKEN = 109;
 }

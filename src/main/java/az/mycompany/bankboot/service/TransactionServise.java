@@ -10,4 +10,7 @@ public interface TransactionServise {
     Response<List<RespTransaction>> getTransactionList();
 
     Response addTransaction(ReqTransaction reqTransaction);
+
+    Response updateTransaction(ReqTransaction reqTransaction);
+
 }

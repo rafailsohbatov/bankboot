@@ -33,8 +33,8 @@ public class TransactionServisImpl implements TransactionServise {
         List<RespTransaction> respTransactionList = new ArrayList<>();
         try {
             List<Transaction> transactionList = transactionRepository.findAllByActive(EnumAvailableStatus.ACTIVE.getValue());
-            if(transactionList.isEmpty()){
-                throw new BankException(ExceptionConstant.TRANSACTION_NOT_FOUND,"Transaction Not Found");
+            if (transactionList.isEmpty()) {
+                throw new BankException(ExceptionConstant.TRANSACTION_NOT_FOUND, "Transaction Not Found");
             }
             for (Transaction transaction : transactionList) {
                 RespTransaction respTransaction = convert(transaction);
@@ -57,15 +57,50 @@ public class TransactionServisImpl implements TransactionServise {
         Response response = new Response();
         try {
             Long accountId = reqTransaction.getAccountId();
-            String crAccount=reqTransaction.getCrAccount();
+            String crAccount = reqTransaction.getCrAccount();
             if (reqTransaction == null || accountId == null || crAccount == null) {
-              throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA,"Invalid Request Data");
+                throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA, "Invalid Request Data");
             }
-            Account account = accountRepository.findByIdAndActive(accountId,EnumAvailableStatus.ACTIVE.getValue());
-            if(account == null){
-                throw new BankException(ExceptionConstant.ACCOUNT_NOT_FOUND,"Account Not Found");
+            Account account = accountRepository.findByIdAndActive(accountId, EnumAvailableStatus.ACTIVE.getValue());
+            if (account == null) {
+                throw new BankException(ExceptionConstant.ACCOUNT_NOT_FOUND, "Account Not Found");
             }
             Transaction transaction = new Transaction();
+            transaction.setDtAccount(account);
+            transaction.setCrAccount(crAccount);
+            Double amount = reqTransaction.getAmount() * 100;
+            transaction.setAmount(amount.intValue());
+            transaction.setCurrency(reqTransaction.getCurrency());
+            transactionRepository.save(transaction);
+            response.setRespStatus(RespStatus.getSuccessRespStatus());
+        } catch (BankException be) {
+            response.setRespStatus(new RespStatus(be.getCode(), be.getMessage()));
+            be.printStackTrace();
+        } catch (Exception ex) {
+            response.setRespStatus(new RespStatus(ExceptionConstant.INTERNAL_EXCEPTION, "Internal Exception"));
+            ex.printStackTrace();
+        }
+        return response;
+    }
+
+    @Override
+    public Response updateTransaction(ReqTransaction reqTransaction) {
+        Response response = new Response();
+        try {
+            Long transactionId = reqTransaction.getId();
+            Long accountId = reqTransaction.getAccountId();
+            String crAccount = reqTransaction.getCrAccount();
+            if (reqTransaction == null || transactionId == null || accountId == null || crAccount == null) {
+                throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA, "Invalid Request Data");
+            }
+            Transaction transaction = transactionRepository.findByIdAndActive(transactionId, EnumAvailableStatus.ACTIVE.getValue());
+            if (transaction == null) {
+                throw new BankException(ExceptionConstant.TRANSACTION_NOT_FOUND, "Transaction Not Found");
+            }
+            Account account = accountRepository.findByIdAndActive(accountId, EnumAvailableStatus.ACTIVE.getValue());
+            if (account == null) {
+                throw new BankException(ExceptionConstant.ACCOUNT_NOT_FOUND, "Account Not Found");
+            }
             transaction.setDtAccount(account);
             transaction.setCrAccount(crAccount);
             Double amount = reqTransaction.getAmount() * 100;

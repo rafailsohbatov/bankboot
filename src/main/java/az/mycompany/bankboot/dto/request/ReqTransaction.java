@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 @Data
 public class ReqTransaction {
 
+    @JsonProperty(value = "transactionId")
+    private Long id;
     private String crAccount;
     private Double amount;
     private String currency;

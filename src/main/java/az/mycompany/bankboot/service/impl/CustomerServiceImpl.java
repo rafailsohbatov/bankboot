@@ -1,6 +1,7 @@
 package az.mycompany.bankboot.service.impl;
 
 import az.mycompany.bankboot.dto.request.ReqCustomer;
+import az.mycompany.bankboot.dto.request.ReqToken;
 import az.mycompany.bankboot.dto.response.RespCustomer;
 import az.mycompany.bankboot.dto.response.RespStatus;
 import az.mycompany.bankboot.dto.response.Response;
@@ -10,6 +11,7 @@ import az.mycompany.bankboot.exception.BankException;
 import az.mycompany.bankboot.exception.ExceptionConstant;
 import az.mycompany.bankboot.repository.CustomerRepository;
 import az.mycompany.bankboot.service.CustomerService;
+import az.mycompany.bankboot.util.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +24,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
+    private final Utility utility;
     private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public Response<List<RespCustomer>> getCustomerList() {
+    public Response<List<RespCustomer>> getCustomerList(ReqToken reqToken) {
         Response<List<RespCustomer>> response = new Response<>();
         try {
+            utility.checkToken(reqToken);
             List<Customer> customerList = customerRepository.findAllByActive(EnumAvailableStatus.ACTIVE.getValue());
             if (customerList.isEmpty()) {
                 throw new BankException(ExceptionConstant.CUSTOMER_NOT_FOUND, "Customer Not Found");

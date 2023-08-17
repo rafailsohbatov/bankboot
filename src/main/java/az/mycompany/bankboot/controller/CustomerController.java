@@ -2,13 +2,16 @@ package az.mycompany.bankboot.controller;
 
 
 import az.mycompany.bankboot.dto.request.ReqCustomer;
+import az.mycompany.bankboot.dto.request.ReqToken;
 import az.mycompany.bankboot.dto.response.RespCustomer;
 import az.mycompany.bankboot.dto.response.Response;
 import az.mycompany.bankboot.entity.Customer;
 import az.mycompany.bankboot.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RestController
@@ -18,9 +21,9 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
-    @GetMapping("/GetCustomerList")
-    public Response<List<RespCustomer>> getCustomerList() {
-        return customerService.getCustomerList();
+    @PostMapping(value = "/GetCustomerList",produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE})
+    public Response<List<RespCustomer>> getCustomerList(@RequestBody ReqToken reqToken) {
+        return customerService.getCustomerList(reqToken);
     }
 
     @GetMapping("/GetCustomerById")

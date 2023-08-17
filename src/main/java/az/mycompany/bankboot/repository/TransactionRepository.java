@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     List<Transaction> findAllByActive(Integer active);
+    Transaction findByIdAndActive(Long id,Integer active);
 }

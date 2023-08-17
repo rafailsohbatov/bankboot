@@ -26,5 +26,9 @@ public class TransactionController {
         return transactionServise.addTransaction(reqTransaction);
     }
 
+    @PutMapping("/UpdateTransaction")
+    public Response updateTransaction(@RequestBody ReqTransaction reqTransaction){
+        return transactionServise.updateTransaction(reqTransaction);
+    }
 
 }
