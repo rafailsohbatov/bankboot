@@ -20,4 +20,5 @@ public class ReqCustomer {
     private String cif;
     private String fin;
     private String seria;
+    private ReqToken reqToken;
 }

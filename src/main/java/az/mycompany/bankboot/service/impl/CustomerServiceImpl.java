@@ -57,6 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Response<RespCustomer> getCustomerById(Long customerId) {
         Response<RespCustomer> response = new Response<>();
         try {
+
             if (customerId == null) {
                 throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA, "Invalid Request Data");
             }
@@ -78,6 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Response addCustomer(ReqCustomer reqCustomer) {
         Response response = new Response();
         try {
+            utility.checkToken(reqCustomer.getReqToken());
             if (reqCustomer == null) {
                 throw new BankException(ExceptionConstant.INVALID_REQUEST_DATA, "Invalid Request Data");
             }
