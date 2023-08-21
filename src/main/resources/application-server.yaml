@@ -3,3 +3,6 @@ server:
   servlet:
     context-path: /bank
 
+app:
+  jwt:
+    secret: bankboot
