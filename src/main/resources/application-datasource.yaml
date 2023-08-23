@@ -8,5 +8,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      auto_quote_keyword: true
+
     show-sql: true

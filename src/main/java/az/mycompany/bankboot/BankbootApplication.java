@@ -12,6 +12,7 @@ public class BankbootApplication {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         System.out.println(passwordEncoder.encode("rafail123"));
         System.out.println(passwordEncoder.encode("zahid123"));
+        System.out.println("Salam".substring(1,"Salam".length() - 1));
     }
 
 }
