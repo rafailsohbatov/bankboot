@@ -12,6 +12,8 @@ import az.mycompany.bankboot.repository.AccountRepository;
 import az.mycompany.bankboot.repository.TransactionRepository;
 import az.mycompany.bankboot.service.TransactionServise;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -22,7 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TransactionServisImpl implements TransactionServise {
-
+    private final static Logger LOGGER = LoggerFactory.getLogger(TransactionServisImpl.class);
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -56,6 +58,7 @@ public class TransactionServisImpl implements TransactionServise {
     public Response addTransaction(ReqTransaction reqTransaction) {
         Response response = new Response();
         try {
+            LOGGER.info("Add Transaction request: "+ reqTransaction);
             Long accountId = reqTransaction.getAccountId();
             String crAccount = reqTransaction.getCrAccount();
             if (reqTransaction == null || accountId == null || crAccount == null) {
@@ -73,12 +76,15 @@ public class TransactionServisImpl implements TransactionServise {
             transaction.setCurrency(reqTransaction.getCurrency());
             transactionRepository.save(transaction);
             response.setRespStatus(RespStatus.getSuccessRespStatus());
+            LOGGER.info("Add Transaction response: is Success");
         } catch (BankException be) {
             response.setRespStatus(new RespStatus(be.getCode(), be.getMessage()));
             be.printStackTrace();
+            LOGGER.info("Add Transaction response: " + be.getMessage());
         } catch (Exception ex) {
             response.setRespStatus(new RespStatus(ExceptionConstant.INTERNAL_EXCEPTION, "Internal Exception"));
             ex.printStackTrace();
+            LOGGER.info("Add Transaction response: " + ex.getMessage());
         }
         return response;
     }
